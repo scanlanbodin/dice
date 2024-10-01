@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Advanced Dice Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Ensures proper scaling on mobile -->
+    <style>
+        /* Reset some default styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        p, ul {
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li::before {
+            content: "• ";
+            color: #4CAF50; /* Green bullet points */
+        }
+
+        /* Pre-game Setup Styles */
+        #setup-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .setup-section {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .setup-section label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .setup-section input[type="text"],
+        .setup-section select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        #start-button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.2s;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        #start-button:hover:not(:disabled) {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        #start-button:disabled {
+            background-color: #888;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+
+        /* Player Containers */
+        .player-container {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .player-title {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .player-title img {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+        }
+
+        .dice-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap; /* Allows dice to wrap on smaller screens */
+        }
+
+        .die {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            font-size: 1.5em;
+            margin: 5px;
+            background-color: #fff;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+
+        .die.rolling {
+            animation: shake 1s infinite;
+        }
+
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            50% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        #roll-button {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.2s;
+            margin: 20px 0;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        #roll-button:hover:not(:disabled) {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        #roll-button:disabled {
+            background-color: #888;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 1.3em;
+            min-height: 26px;
+            font-weight: bold;
+        }
+
+        .scoreboard {
+            margin-top: 20px;
+            font-size: 1em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .scoreboard p {
+            margin: 5px 0;
+        }
+
+        .highlight-win {
+            color: green;
+        }
+
+        .highlight-lose {
+            color: red;
+        }
+
+        @media (min-width: 600px) {
+            /* Layout adjustments for larger screens */
+            .scoreboard {
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            .scoreboard p {
+                margin: 0 15px;
+            }
+        }
+
+        /* Responsive Enhancements */
+        @media (max-width: 600px) {
+            .player-container {
+                padding: 10px;
+            }
+
+            .player-title {
+                font-size: 1.3em;
+            }
+
+            .die {
+                width: 50px;
+                height: 50px;
+                line-height: 50px;
+                font-size: 1.2em;
+            }
+
+            #roll-button {
+                padding: 12px 25px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Pre-game Setup Container -->
+    <div id="setup-container">
+        <h2>🎲 Game Setup 🎲</h2>
+        <div class="setup-section">
+            <label for="mode-select">Choose Opponent:</label>
+            <select id="mode-select">
+                <option value="computer">Computer</option>
+                <option value="player">Another Player</option>
+            </select>
+       
